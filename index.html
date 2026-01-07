@@ -1,28 +1,246 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quiz Ultra Cyclisme</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Ultra Cyclisme</title>
+
+<style>
+:root {
+  --bg: #0b0d10;
+  --card: #141821;
+  --accent: #ff4d00;
+  --text: #ffffff;
+  --muted: #9aa0aa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #141821, #050608);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.7rem;
+  margin-bottom: 10px;
+}
+
+.progress {
+  height: 6px;
+  background: #222;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), #ff8a00);
+  transition: width 0.4s ease;
+}
+
+.card {
+  background: linear-gradient(180deg, #161b26, #0f121a);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  animation: fade 0.4s ease;
+}
+
+#question {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: none;
+  background: #1d2330;
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+button:hover {
+  background: #262e40;
+  transform: scale(1.02);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.hidden {
+  display: none;
+}
+
+#result h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+.cta {
+  margin-top: 20px;
+  background: linear-gradient(90deg, var(--accent), #ff8a00);
+  color: black;
+  font-weight: 600;
+}
+
+.share {
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid #333;
+  color: var(--muted);
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
 </head>
+
 <body>
 
-  <div class="app">
-    <h1>Quel ultra-cycliste es-tu ?</h1>
+<div class="container">
+  <h1>Quel ultra-cycliste es-tu ?</h1>
 
-    <div id="quiz">
-      <p id="question"></p>
-      <div class="answers">
-        <button onclick="answer('A')" id="a"></button>
-        <button onclick="answer('B')" id="b"></button>
-        <button onclick="answer('C')" id="c"></button>
-      </div>
-    </div>
-
-    <div id="result" class="hidden"></div>
+  <div class="progress">
+    <div class="progress-bar" id="progress"></div>
   </div>
 
-  <script src="script.js"></script>
+  <div id="quiz" class="card">
+    <div id="question"></div>
+    <button onclick="answer('A')" id="a"></button>
+    <button onclick="answer('B')" id="b"></button>
+    <button onclick="answer('C')" id="c"></button>
+  </div>
+
+  <div id="result" class="card hidden"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Pourquoi fais-tu du vélo ?",
+    A: "Découvrir des paysages et vivre une aventure",
+    B: "Me dépasser et sortir de ma zone de confort",
+    C: "Performer et repousser mes limites"
+  },
+  {
+    q: "Ton rapport à l’effort long",
+    A: "Tant que le plaisir est là",
+    B: "Dur mais gérable",
+    C: "Quand ça fait mal"
+  },
+  {
+    q: "Ton rapport à l’inconnu",
+    A: "Improviser et explorer",
+    B: "Aventure cadrée",
+    C: "Défis extrêmes"
+  },
+  {
+    q: "Sur plusieurs jours à vélo, tu privilégies…",
+    A: "Voyage et rencontres",
+    B: "Équilibre effort/plaisir",
+    C: "Stratégie et performance"
+  },
+  {
+    q: "Quand ça devient vraiment dur…",
+    A: "Je m’adapte",
+    B: "Je m’accroche",
+    C: "J’accélère"
+  }
+];
+
+let current = 0;
+let score = { A: 0, B: 0, C: 0 };
+
+function showQuestion() {
+  const q = questions[current];
+  document.getElementById("question").textContent = q.q;
+  document.getElementById("a").textContent = "A — " + q.A;
+  document.getElementById("b").textContent = "B — " + q.B;
+  document.getElementById("c").textContent = "C — " + q.C;
+  document.getElementById("progress").style.width =
+    ((current) / questions.length) * 100 + "%";
+}
+
+function answer(letter) {
+  score[letter]++;
+  current++;
+  current < questions.length ? showQuestion() : showResult();
+}
+
+function showResult() {
+  document.getElementById("quiz").classList.add("hidden");
+  document.getElementById("progress").style.width = "100%";
+
+  const winner = Object.keys(score).reduce((a, b) =>
+    score[a] > score[b] ? a : b
+  );
+
+  const profiles = {
+    A: {
+      title: "🌍 L’EXPLORATEUR",
+      text: "Tu roules pour l’aventure, la liberté et la découverte.",
+      cta: "Découvrir les ultras aventure"
+    },
+    B: {
+      title: "🔥 L’AVENTURIER",
+      text: "Tu cherches le dépassement avec équilibre et intelligence.",
+      cta: "Voir les défis endurance"
+    },
+    C: {
+      title: "⚡ L’ULTRA-RIDER",
+      text: "Performance, stratégie et intensité totale.",
+      cta: "Accéder aux ultras extrêmes"
+    }
+  };
+
+  const p = profiles[winner];
+  const result = document.getElementById("result");
+  result.classList.remove("hidden");
+  result.innerHTML = `
+    <h2>${p.title}</h2>
+    <p>${p.text}</p>
+    <button class="cta">${p.cta}</button>
+    <button class="share" onclick="shareResult('${p.title}')">Partager mon profil</button>
+  `;
+}
+
+function shareResult(profile) {
+  if (navigator.share) {
+    navigator.share({
+      title: "Mon profil ultra-cycliste",
+      text: "Je suis " + profile + " 🚴‍♂️",
+      url: window.location.href
+    });
+  } else {
+    alert("Partage non supporté sur ce navigateur.");
+  }
+}
+
+showQuestion();
+</script>
+
 </body>
 </html>
