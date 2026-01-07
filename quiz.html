@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Ultra Cyclisme</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app">
+    <h1>Quel ultra-cycliste es-tu ?</h1>
+
+    <div id="quiz">
+      <p id="question"></p>
+      <div class="answers">
+        <button onclick="answer('A')" id="a"></button>
+        <button onclick="answer('B')" id="b"></button>
+        <button onclick="answer('C')" id="c"></button>
+      </div>
+    </div>
+
+    <div id="result" class="hidden"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
