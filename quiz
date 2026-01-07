@@ -1,0 +1,69 @@
+const questions = [
+  {
+    q: "Pourquoi fais-tu du vélo ?",
+    A: "Pour découvrir des paysages et vivre une aventure",
+    B: "Pour me dépasser et sortir de ma zone de confort",
+    C: "Pour performer, repousser mes limites et aller loin"
+  },
+  {
+    q: "Ton rapport à l’effort long",
+    A: "J’aime rouler longtemps tant que le plaisir est là",
+    B: "J’aime quand ça devient dur, mais gérable",
+    C: "J’aime quand ça fait mal… c’est là que je me révèle"
+  },
+  {
+    q: "Ton rapport à l’inconnu",
+    A: "J’adore improviser, explorer, me laisser surprendre",
+    B: "J’aime l’aventure, mais avec un minimum de cadre",
+    C: "J’aime les défis clairs, exigeants, presque extrêmes"
+  },
+  {
+    q: "Si tu pars plusieurs jours à vélo, tu privilégies…",
+    A: "Le voyage, les rencontres, les paysages",
+    B: "L’équilibre entre effort, plaisir et dépassement",
+    C: "La performance, la gestion du sommeil, la stratégie"
+  },
+  {
+    q: "Quand ça devient vraiment dur…",
+    A: "Je ralentis, je m’adapte, je savoure l’expérience",
+    B: "Je m’accroche, je trouve des ressources mentales",
+    C: "J’accélère : c’est là que je me sens vivant"
+  }
+];
+
+let index = 0;
+let score = { A: 0, B: 0, C: 0 };
+
+function showQuestion() {
+  const q = questions[index];
+  document.getElementById("question").textContent = q.q;
+  document.getElementById("a").textContent = "A. " + q.A;
+  document.getElementById("b").textContent = "B. " + q.B;
+  document.getElementById("c").textContent = "C. " + q.C;
+}
+
+function answer(letter) {
+  score[letter]++;
+  index++;
+  index < questions.length ? showQuestion() : showResult();
+}
+
+function showResult() {
+  document.getElementById("quiz").classList.add("hidden");
+
+  const max = Object.keys(score).reduce((a, b) =>
+    score[a] > score[b] ? a : b
+  );
+
+  const results = {
+    A: "🌍 **L’EXPLORATEUR**\nTu roules pour l’aventure, la découverte et la liberté.\n👉 Formats conseillés : parcours aventure, ultra accessible.",
+    B: "🔥 **L’AVENTURIER**\nTu aimes repousser tes limites avec intelligence.\n👉 Formats conseillés : ultra intermédiaire, défis progressifs.",
+    C: "⚡ **L’ULTRA-RIDER**\nTu recherches l’intensité et le défi total.\n👉 Formats conseillés : longues distances, autonomie complète."
+  };
+
+  const resultDiv = document.getElementById("result");
+  resultDiv.classList.remove("hidden");
+  resultDiv.innerHTML = results[max].replace(/\n/g, "<br>");
+}
+
+showQuestion();
